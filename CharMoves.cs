@@ -4,57 +4,57 @@ using UnityEngine;
 
 public class CharMoves : MonoBehaviour
 {
-    private Rigidbody2D rb; //Varíavel do personagem
-    public float Velocidade = 1f; //Velocidade de Movimento do personagem
-    public float Pulo = 1f; //Força do Pulo
-    private bool Chao; //Vamos utilizar para verificar se estã no Chão
+    private Rigidbody2D rb; //Variável do personagem
+    private SpriteRenderer rbSprite;
+    //private Animator animator; //Variável da Animação
+
+    public float Velocidade = 5f; //Velocidade de Movimento do personagem
+    public float Pulo = 12f; //Força do Pulo
+
+    //Tudo para Verificar o chão
+    public bool Chao; 
+    public Transform EstaChao; 
+    public float ChaoRaio;
+    public LayerMask LayerTerreno;
+
     // Start is called before the first frame update
     void Start()
     {
+        rbSprite = GetComponent<SpriteRenderer>();
         rb = GetComponent<Rigidbody2D>();
+        //animator = GetComponent<Animator>();
     }
-
     // Update is called once per frame
     void Update()
     {
-        // Movimentação horizontal
-float moveInput = Input.GetAxis("Horizontal");
-rb.velocity = new Vector2(moveInput * Velocidade, rb.velocity.y);
-
-//Pega o paremetro velocidade da Animação e fala que é nosso parametro de movimento
-//animator.SetFloat("Velocidade", Mathf.Abs(moveInput));
-
-// Pulo
-float jump = Input.GetAxis("Jump");
-if (jump >= 0 && Chao)
-{
-    rb.velocity = new Vector2(rb.velocity.x, jump * Pulo);
-}
-
-// Faz o Personagem Rotacionar
-if (moveInput > 0)
-{
-    transform.localScale = new Vector3(1, 1, 1);
-}
-else if (moveInput < 0)
-{
-    transform.localScale = new Vector3(-1, 1, 1);
-}
+        Pular();
     }
-
-    // Verifica se o Personagem está no chão
-    private void OnCollisionEnter2D(Collision2D collision)
+    private void FixedUpdate()
     {
-        if (collision.gameObject.CompareTag("chao"))
+        Movimentar();
+    }
+    //Movimenta o personagem
+    private void Movimentar()
+    {
+        float moveInput = Input.GetAxis("Horizontal");
+        rb.velocity = new Vector2(moveInput*Velocidade,rb.velocity.y);
+
+        if (moveInput > 0)
         {
-            Chao = true;
+            rbSprite.flipX = false;
+        }
+        else if(moveInput < 0)
+        {
+            rbSprite.flipY = true;
         }
     }
-    private void OnCollisionExit2D(Collision2D collision)
+    //Faz o Personagem Pular
+    private void Pular()
     {
-        if (collision.gameObject.CompareTag("chao"))
+        Chao = Physics2D.OverlapCircle(EstaChao.position, ChaoRaio, LayerTerreno);
+        if (Input.GetButtonDown("Jump") && Chao)
         {
-            Chao = false;
+            rb.velocity = new Vector2(rb.velocity.x, Pulo);
         }
     }
 }
