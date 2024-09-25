@@ -4,10 +4,10 @@ using UnityEngine;
 
 public class CharMoves : MonoBehaviour
 {
-    private Rigidbody2D rb; //Varíavel do personagem
+    private Rigidbody2D rb; //VarÃ­avel do personagem
     public float Velocidade = 1f; //Velocidade de Movimento do personagem
-    public float Pulo = 1f; //Força do Pulo
-    private bool Chao; //Vamos utilizar para verificar se estã no Chão
+    public float Pulo = 1f; //ForÃ§a do Pulo
+    private bool Chao; //Vamos utilizar para verificar se estÃ£ no ChÃ£o
     // Start is called before the first frame update
     void Start()
     {
@@ -17,27 +17,32 @@ public class CharMoves : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        // Movimentação horizontal
-        float moveInput = Input.GetAxis("Horizontal");
-        rb.velocity = new Vector2(moveInput * Velocidade, rb.velocity.y);
+        // MovimentaÃ§Ã£o horizontal
+float moveInput = Input.GetAxis("Horizontal");
+rb.velocity = new Vector2(moveInput * Velocidade, rb.velocity.y);
 
-        // Pulo
-        if (Input.GetButtonDown("Jump") && Chao)
-        {
-            rb.velocity = new Vector2(rb.velocity.x, Pulo);
-        }
-        // Faz o Personagem Rotacionar
-        if (moveInput > 0)
-        {
-            transform.localScale = new Vector3(1, 1, 1);
-        }
-        else if (moveInput < 0)
-        {
-            transform.localScale = new Vector3(-1, 1, 1);
-        }
+//Pega o paremetro velocidade da AnimaÃ§Ã£o e fala que Ã© nosso parametro de movimento
+//animator.SetFloat("Velocidade", Mathf.Abs(moveInput));
+
+// Pulo
+float jump = Input.GetAxis("Jump");
+if (jump >= 0 && Chao)
+{
+    rb.velocity = new Vector2(rb.velocity.x, jump * Pulo);
+}
+
+// Faz o Personagem Rotacionar
+if (moveInput > 0)
+{
+    transform.localScale = new Vector3(1, 1, 1);
+}
+else if (moveInput < 0)
+{
+    transform.localScale = new Vector3(-1, 1, 1);
+}
     }
 
-    // Verifica se o Personagem está no chão
+    // Verifica se o Personagem estÃ¡ no chÃ£o
     private void OnCollisionEnter2D(Collision2D collision)
     {
         if (collision.gameObject.CompareTag("chao"))
